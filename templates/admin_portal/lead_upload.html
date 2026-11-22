@@ -1,0 +1,18 @@
+{% extends 'admin_portal/layout.html' %}
+{% block page %}
+<h3>Upload Leads</h3>
+<div class="card shadow-sm" style="max-width:520px">
+  <div class="card-body">
+    <p>Upload a <b>.csv</b> or <b>.xlsx</b> file with columns:
+       <code>name, phone, city, loan_type</code>.
+       Allowed loan types: personal, home, business, vehicle, education.</p>
+    <a href="{% url 'sample_csv' %}" class="btn btn-sm btn-outline-secondary mb-3">Download sample file</a>
+    <form method="post" enctype="multipart/form-data">
+      {% csrf_token %}
+      <input type="file" name="file" class="form-control mb-3" accept=".csv,.xlsx" required>
+      <button class="btn btn-primary">Upload</button>
+      <a href="{% url 'lead_list' %}" class="btn btn-light">Cancel</a>
+    </form>
+  </div>
+</div>
+{% endblock %}

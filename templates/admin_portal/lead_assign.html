@@ -1,0 +1,24 @@
+{% extends 'admin_portal/layout.html' %}
+{% block page %}
+<h3>Assign Today's Leads</h3>
+<p>Unassigned leads: <b>{{ unassigned_count }}</b> &nbsp; | &nbsp; Date: {{ today }}</p>
+
+<form method="post" class="mb-4">
+  {% csrf_token %}
+  <button class="btn btn-success" {% if not unassigned_count %}disabled{% endif %}>
+    Distribute leads evenly
+  </button>
+  <div class="form-text">Leads are split equally, up to each employee's daily target.</div>
+</form>
+
+<table class="table bg-white" style="max-width:600px">
+  <thead><tr><th>Employee</th><th>Daily target</th><th>Assigned today</th></tr></thead>
+  <tbody>
+    {% for s, count in rows %}
+    <tr><td>{{ s.username }}</td><td>{{ s.daily_target }}</td><td>{{ count }}</td></tr>
+    {% empty %}
+    <tr><td colspan="3">No active employees.</td></tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% endblock %}

@@ -1,0 +1,61 @@
+{% extends 'admin_portal/layout.html' %}
+{% block page %}
+<div class="d-flex justify-content-between align-items-center mb-3">
+  <h3>Leads</h3>
+  <a href="{% url 'lead_upload' %}" class="btn btn-primary">Upload Leads</a>
+</div>
+
+<form method="get" class="row g-2 mb-3">
+  <div class="col-md-4">
+    <input name="q" value="{{ q }}" class="form-control" placeholder="Search name or phone">
+  </div>
+  <div class="col-md-3">
+    <select name="status" class="form-select">
+      <option value="">All statuses</option>
+      {% for key, label in status_choices %}
+        <option value="{{ key }}" {% if status == key %}selected{% endif %}>{{ label }}</option>
+      {% endfor %}
+    </select>
+  </div>
+  <div class="col-md-3">
+    <select name="staff" class="form-select">
+      <option value="">All employees</option>
+      <option value="none" {% if staff == 'none' %}selected{% endif %}>Unassigned</option>
+      {% for s in staff_list %}
+        <option value="{{ s.id }}" {% if staff == s.id|stringformat:"s" %}selected{% endif %}>{{ s.username }}</option>
+      {% endfor %}
+    </select>
+  </div>
+  <div class="col-md-2"><button class="btn btn-outline-primary w-100">Filter</button></div>
+</form>
+
+<div class="table-responsive">
+  <table class="table table-striped bg-white">
+    <thead><tr><th>Name</th><th>Phone</th><th>City</th><th>Loan</th><th>Status</th><th>Assigned to</th></tr></thead>
+    <tbody>
+      {% for l in page %}
+      <tr>
+        <td>{{ l.name }}</td><td>{{ l.phone }}</td><td>{{ l.city }}</td>
+        <td>{{ l.get_loan_type_display }}</td>
+        <td><span class="badge bg-info text-dark">{{ l.get_status_display }}</span></td>
+        <td>{{ l.assigned_to.username|default:"-" }}</td>
+      </tr>
+      {% empty %}
+      <tr><td colspan="6" class="text-center">No leads found.</td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+
+<nav>
+  <ul class="pagination">
+    {% if page.has_previous %}
+      <li class="page-item"><a class="page-link" href="?page={{ page.previous_page_number }}&q={{ q }}&status={{ status }}&staff={{ staff }}">Previous</a></li>
+    {% endif %}
+    <li class="page-item disabled"><span class="page-link">Page {{ page.number }} of {{ page.paginator.num_pages }}</span></li>
+    {% if page.has_next %}
+      <li class="page-item"><a class="page-link" href="?page={{ page.next_page_number }}&q={{ q }}&status={{ status }}&staff={{ staff }}">Next</a></li>
+    {% endif %}
+  </ul>
+</nav>
+{% endblock %}
