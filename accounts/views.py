@@ -10,6 +10,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 from .decorators import admin_required, staff_required
 from .forms import EmployeeForm
 from .models import User
+from django.contrib.auth import views as auth_views
 
 
 @login_required
@@ -20,12 +21,9 @@ def home(request):
 
 
 def logout_view(request):
-    was_mobile = request.session.get('mobile', False)
     logout(request)
-    if was_mobile:
-        request.session['mobile'] = True
     return redirect('login')
-
+    
 @admin_required
 def admin_dashboard(request):
     today = timezone.localdate()
@@ -89,3 +87,13 @@ def mobile_entry(request):
 def desktop_entry(request):
     request.session.pop('mobile', None)
     return redirect('home')
+
+class SmartLoginView(auth_views.LoginView):
+    template_name = 'login.html'
+    redirect_authenticated_user = True
+
+    def dispatch(self, request, *args, **kwargs):
+        # a plain /login/ visit (no "next") resets to the desktop layout
+        if request.method == 'GET' and 'next' not in request.GET:
+            request.session.pop('mobile', None)
+        return super().dispatch(request, *args, **kwargs)
