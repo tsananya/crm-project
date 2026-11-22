@@ -1,0 +1,48 @@
+{% extends 'admin_portal/layout.html' %}
+{% block page %}
+<h3>Reports</h3>
+<form method="get" class="row g-2 mb-3">
+  <div class="col-md-3">
+    <label class="form-label small">From</label>
+    <input type="date" name="from" value="{{ start|date:'Y-m-d' }}" class="form-control">
+  </div>
+  <div class="col-md-3">
+    <label class="form-label small">To</label>
+    <input type="date" name="to" value="{{ end|date:'Y-m-d' }}" class="form-control">
+  </div>
+  <div class="col-md-3">
+    <label class="form-label small">Employee</label>
+    <select name="staff" class="form-select">
+      <option value="">All employees</option>
+      {% for s in staff_list %}
+        <option value="{{ s.id }}" {% if emp == s.id|stringformat:"s" %}selected{% endif %}>{{ s.username }}</option>
+      {% endfor %}
+    </select>
+  </div>
+  <div class="col-md-3 d-flex align-items-end gap-2">
+    <button class="btn btn-primary">Apply</button>
+    <button class="btn btn-outline-success" name="export" value="1">Export CSV</button>
+  </div>
+</form>
+
+<div class="table-responsive">
+  <table class="table table-striped bg-white">
+    <thead>
+      <tr><th>Employee</th><th>Calls</th><th>Interested</th><th>Not interested</th>
+          <th>Not reachable</th><th>Applications</th><th>Disbursed</th></tr>
+    </thead>
+    <tbody>
+      {% for r in rows %}
+      <tr>{% for cell in r %}<td>{{ cell }}</td>{% endfor %}</tr>
+      {% empty %}
+      <tr><td colspan="7" class="text-center">No data.</td></tr>
+      {% endfor %}
+    </tbody>
+    {% if rows %}
+    <tfoot>
+      <tr class="fw-bold"><td>Total</td>{% for t in totals %}<td>{{ t }}</td>{% endfor %}</tr>
+    </tfoot>
+    {% endif %}
+  </table>
+</div>
+{% endblock %}

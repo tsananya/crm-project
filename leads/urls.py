@@ -1,5 +1,6 @@
 from django.urls import path
-from . import views, staff_views
+from . import views, staff_views, reports
+
 
 urlpatterns = [
     # admin
@@ -17,4 +18,5 @@ urlpatterns = [
     path('staff/followups/', staff_views.my_followups, name='my_followups'),
     path('staff/followups/<int:pk>/done/', staff_views.followup_done, name='followup_done'),
     path('staff/performance/', staff_views.performance, name='performance'),
+    path('manage/reports/', reports.report, name='report'),
 ]
