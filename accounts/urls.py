@@ -12,4 +12,6 @@ urlpatterns = [
     path('manage/employees/add/', views.employee_form, name='employee_add'),
     path('manage/employees/<int:pk>/edit/', views.employee_form, name='employee_edit'),
     path('manage/employees/<int:pk>/toggle/', views.employee_toggle, name='employee_toggle'),
+    path('m/', views.mobile_entry, name='mobile'),
+    path('desktop/', views.desktop_entry, name='desktop'),
 ]

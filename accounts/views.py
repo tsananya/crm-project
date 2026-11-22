@@ -20,9 +20,11 @@ def home(request):
 
 
 def logout_view(request):
+    was_mobile = request.session.get('mobile', False)
     logout(request)
+    if was_mobile:
+        request.session['mobile'] = True
     return redirect('login')
-
 
 @admin_required
 def admin_dashboard(request):
@@ -78,3 +80,12 @@ def employee_toggle(request, pk):
         emp.save()
         messages.success(request, f'{emp.username} is now {"active" if emp.is_active else "deactivated"}.')
     return redirect('employee_list')
+
+def mobile_entry(request):
+    request.session['mobile'] = True
+    return redirect('home')
+
+
+def desktop_entry(request):
+    request.session.pop('mobile', None)
+    return redirect('home')

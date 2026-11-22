@@ -1,0 +1,22 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="row">
+  <div class="col-md-2 mb-3">
+    <div class="list-group">
+      <a href="{% url 'admin_dashboard' %}" class="list-group-item list-group-item-action">Dashboard</a>
+      <a href="{% url 'employee_list' %}" class="list-group-item list-group-item-action">Employees</a>
+      <a href="{% url 'lead_list' %}" class="list-group-item list-group-item-action">Leads</a>
+      <a href="{% url 'lead_assign' %}" class="list-group-item list-group-item-action">Assign Leads</a>
+      <a href="{% url 'document_list' %}" class="list-group-item list-group-item-action">Documents</a>
+      <a href="{% url 'application_list' %}" class="list-group-item list-group-item-action">Loan Applications</a>
+      <a href="{% url 'bank_list' %}" class="list-group-item list-group-item-action">Banks</a>
+      <a href="{% url 'scheme_list' %}" class="list-group-item list-group-item-action">Loan Schemes</a>
+      <a href="{% url 'report' %}" class="list-group-item list-group-item-action">Reports</a>
+      <a href="{% url 'mobile' %}" class="list-group-item list-group-item-action text-primary">Mobile view</a>
+    </div>
+  </div>
+  <div class="col-md-10">
+    {% block page %}{% endblock %}
+  </div>
+</div>
+{% endblock %}
