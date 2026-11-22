@@ -1,0 +1,20 @@
+<div class="table-responsive">
+  <table class="table table-sm bg-white">
+    <tbody>
+      {% for f in items %}
+      <tr>
+        <td>{{ f.scheduled_at|date:"d M, H:i" }}</td>
+        <td><a href="{% url 'lead_detail' f.lead.pk %}">{{ f.lead.name }}</a> ({{ f.lead.phone }})</td>
+        <td>{{ f.note }}</td>
+        <td class="text-end">
+          <form method="post" action="{% url 'followup_done' f.pk %}">
+            {% csrf_token %}<button class="btn btn-sm btn-outline-success">Mark done</button>
+          </form>
+        </td>
+      </tr>
+      {% empty %}
+      <tr><td class="text-muted">Nothing here.</td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>

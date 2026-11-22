@@ -1,0 +1,28 @@
+{% extends 'staff_portal/layout.html' %}
+{% block page %}
+<h3>My Performance</h3>
+<div class="row g-3 mb-3">
+  <div class="col-6 col-md-3"><div class="card shadow-sm"><div class="card-body"><div class="text-muted small">Calls today</div><h3>{{ today_calls }} / {{ target }}</h3></div></div></div>
+  <div class="col-6 col-md-3"><div class="card shadow-sm"><div class="card-body"><div class="text-muted small">Total calls</div><h3>{{ total_calls }}</h3></div></div></div>
+  <div class="col-6 col-md-3"><div class="card shadow-sm"><div class="card-body"><div class="text-muted small">Interested</div><h3>{{ interested }}</h3></div></div></div>
+  <div class="col-6 col-md-3"><div class="card shadow-sm"><div class="card-body"><div class="text-muted small">Applications</div><h3>{{ applications }}</h3></div></div></div>
+</div>
+<div class="card shadow-sm"><div class="card-body">
+  <h6>Calls in the last 7 days</h6>
+  <canvas id="chart" height="100"></canvas>
+</div></div>
+
+{{ labels|json_script:"labels" }}
+{{ counts|json_script:"counts" }}
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js"></script>
+<script>
+  new Chart(document.getElementById('chart'), {
+    type: 'bar',
+    data: {
+      labels: JSON.parse(document.getElementById('labels').textContent),
+      datasets: [{label: 'Calls', data: JSON.parse(document.getElementById('counts').textContent), backgroundColor: '#0d6efd'}]
+    },
+    options: {scales: {y: {beginAtZero: true, ticks: {precision: 0}}}}
+  });
+</script>
+{% endblock %}

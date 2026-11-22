@@ -1,0 +1,13 @@
+{% extends 'staff_portal/layout.html' %}
+{% block page %}
+<h3>My Follow-ups</h3>
+
+{% for title, items, color in sections %}{% endfor %}
+
+<h5 class="text-danger mt-3">Overdue</h5>
+{% include 'staff_portal/_followup_table.html' with items=overdue %}
+<h5 class="mt-4">Today</h5>
+{% include 'staff_portal/_followup_table.html' with items=today %}
+<h5 class="mt-4">Upcoming</h5>
+{% include 'staff_portal/_followup_table.html' with items=upcoming %}
+{% endblock %}

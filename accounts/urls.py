@@ -8,7 +8,6 @@ urlpatterns = [
         template_name='login.html', redirect_authenticated_user=True), name='login'),
     path('logout/', views.logout_view, name='logout'),
     path('manage/dashboard/', views.admin_dashboard, name='admin_dashboard'),
-    path('staff/dashboard/', views.staff_dashboard, name='staff_dashboard'),
     path('manage/employees/', views.employee_list, name='employee_list'),
     path('manage/employees/add/', views.employee_form, name='employee_add'),
     path('manage/employees/<int:pk>/edit/', views.employee_form, name='employee_edit'),

@@ -1,0 +1,90 @@
+{% extends 'staff_portal/layout.html' %}
+{% block page %}
+<a href="{% url 'staff_dashboard' %}" class="btn btn-sm btn-light mb-2">&larr; Back to leads</a>
+<div class="card shadow-sm mb-3">
+  <div class="card-body">
+    <h4>{{ lead.name }} <span class="badge bg-info text-dark fs-6">{{ lead.get_status_display }}</span></h4>
+    <p class="mb-0">
+      <a href="tel:{{ lead.phone }}" class="btn btn-success btn-sm">Call {{ lead.phone }}</a>
+      &nbsp; {{ lead.city }} &nbsp;|&nbsp; Wants: {{ lead.get_loan_type_display }} loan
+    </p>
+  </div>
+</div>
+
+<div class="row g-3">
+  <div class="col-lg-6">
+    <div class="card shadow-sm mb-3"><div class="card-body">
+      <h6>Record a call</h6>
+      <form method="post" action="{% url 'add_call' lead.pk %}">
+        {% csrf_token %}{{ call_form.as_div }}
+        <button class="btn btn-primary mt-2">Save call</button>
+      </form>
+    </div></div>
+
+    <div class="card shadow-sm mb-3"><div class="card-body">
+      <h6>Schedule a follow-up</h6>
+      <form method="post" action="{% url 'add_followup' lead.pk %}">
+        {% csrf_token %}{{ fu_form.as_div }}
+        <button class="btn btn-primary mt-2">Schedule</button>
+      </form>
+    </div></div>
+
+    <div class="card shadow-sm mb-3"><div class="card-body">
+      <h6>Upload a document</h6>
+      <form method="post" action="{% url 'upload_document' lead.pk %}" enctype="multipart/form-data">
+        {% csrf_token %}{{ doc_form.as_div }}
+        <button class="btn btn-primary mt-2">Upload</button>
+      </form>
+    </div></div>
+
+    <div class="card shadow-sm mb-3"><div class="card-body">
+      <h6>Create loan application</h6>
+      <form method="post" action="{% url 'add_application' lead.pk %}">
+        {% csrf_token %}{{ app_form.as_div }}
+        <button class="btn btn-primary mt-2">Create application</button>
+      </form>
+    </div></div>
+  </div>
+
+  <div class="col-lg-6">
+    <div class="card shadow-sm mb-3"><div class="card-body">
+      <h6>Call history</h6>
+      {% for c in calls %}
+        <div class="border-bottom py-1 small">
+          <b>{{ c.get_status_display }}</b> &middot; {{ c.called_at|date:"d M, H:i" }}<br>{{ c.remarks }}
+        </div>
+      {% empty %}<p class="text-muted mb-0">No calls yet.</p>{% endfor %}
+    </div></div>
+
+    <div class="card shadow-sm mb-3"><div class="card-body">
+      <h6>Follow-ups</h6>
+      {% for f in followups %}
+        <div class="border-bottom py-1 small">
+          {{ f.scheduled_at|date:"d M, H:i" }} &middot; {{ f.note }}
+          {% if f.done %}<span class="badge bg-success">Done</span>{% endif %}
+        </div>
+      {% empty %}<p class="text-muted mb-0">None scheduled.</p>{% endfor %}
+    </div></div>
+
+    <div class="card shadow-sm mb-3"><div class="card-body">
+      <h6>Documents</h6>
+      {% for d in documents %}
+        <div class="border-bottom py-1 small">
+          <a href="{{ d.file.url }}" target="_blank">{{ d.get_doc_type_display }}</a>
+          <span class="badge {% if d.verification == 'verified' %}bg-success{% elif d.verification == 'rejected' %}bg-danger{% else %}bg-warning text-dark{% endif %}">{{ d.get_verification_display }}</span>
+        </div>
+      {% empty %}<p class="text-muted mb-0">No documents yet.</p>{% endfor %}
+    </div></div>
+
+    <div class="card shadow-sm mb-3"><div class="card-body">
+      <h6>Loan applications</h6>
+      {% for a in applications %}
+        <div class="border-bottom py-1 small">
+          {{ a.bank.name }} &middot; {{ a.scheme.name }} &middot; &#8377;{{ a.amount }}
+          <span class="badge bg-secondary">{{ a.get_status_display }}</span>
+        </div>
+      {% empty %}<p class="text-muted mb-0">No applications yet.</p>{% endfor %}
+    </div></div>
+  </div>
+</div>
+{% endblock %}
