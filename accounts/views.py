@@ -1,7 +1,11 @@
+from django.contrib import messages
 from django.contrib.auth import logout
 from django.contrib.auth.decorators import login_required
-from django.shortcuts import render, redirect
+from django.db.models import Count
+from django.shortcuts import render, redirect, get_object_or_404
 from .decorators import admin_required, staff_required
+from .forms import EmployeeForm
+from .models import User
 
 
 @login_required
@@ -24,3 +28,32 @@ def admin_dashboard(request):
 @staff_required
 def staff_dashboard(request):
     return render(request, 'staff_portal/dashboard.html')
+
+
+@admin_required
+def employee_list(request):
+    employees = User.objects.filter(role='staff').annotate(
+        lead_count=Count('leads')).order_by('username')
+    return render(request, 'admin_portal/employees.html', {'employees': employees})
+
+
+@admin_required
+def employee_form(request, pk=None):
+    instance = get_object_or_404(User, pk=pk, role='staff') if pk else None
+    form = EmployeeForm(request.POST or None, instance=instance)
+    if request.method == 'POST' and form.is_valid():
+        form.save()
+        messages.success(request, 'Employee saved.')
+        return redirect('employee_list')
+    return render(request, 'admin_portal/employee_form.html',
+                  {'form': form, 'instance': instance})
+
+
+@admin_required
+def employee_toggle(request, pk):
+    if request.method == 'POST':
+        emp = get_object_or_404(User, pk=pk, role='staff')
+        emp.is_active = not emp.is_active
+        emp.save()
+        messages.success(request, f'{emp.username} is now {"active" if emp.is_active else "deactivated"}.')
+    return redirect('employee_list')

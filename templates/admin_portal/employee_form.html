@@ -1,0 +1,21 @@
+{% extends 'admin_portal/layout.html' %}
+{% block page %}
+<h3>{% if instance %}Edit{% else %}Add{% endif %} Employee</h3>
+<div class="card shadow-sm" style="max-width:520px">
+  <div class="card-body">
+    <form method="post">
+      {% csrf_token %}
+      {% for field in form %}
+        <div class="mb-3">
+          <label class="form-label">{{ field.label }}</label>
+          {{ field }}
+          {% if field.help_text %}<div class="form-text">{{ field.help_text }}</div>{% endif %}
+          {% for err in field.errors %}<div class="text-danger small">{{ err }}</div>{% endfor %}
+        </div>
+      {% endfor %}
+      <button class="btn btn-primary">Save</button>
+      <a href="{% url 'employee_list' %}" class="btn btn-light">Cancel</a>
+    </form>
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,39 @@
+{% extends 'admin_portal/layout.html' %}
+{% block page %}
+<div class="d-flex justify-content-between align-items-center mb-3">
+  <h3>Employees</h3>
+  <a href="{% url 'employee_add' %}" class="btn btn-primary">+ Add Employee</a>
+</div>
+<div class="table-responsive">
+  <table class="table table-striped bg-white">
+    <thead>
+      <tr><th>Username</th><th>Name</th><th>Daily target</th><th>Leads</th><th>Status</th><th></th></tr>
+    </thead>
+    <tbody>
+      {% for e in employees %}
+      <tr>
+        <td>{{ e.username }}</td>
+        <td>{{ e.get_full_name }}</td>
+        <td>{{ e.daily_target }}</td>
+        <td>{{ e.lead_count }}</td>
+        <td>
+          {% if e.is_active %}<span class="badge bg-success">Active</span>
+          {% else %}<span class="badge bg-secondary">Inactive</span>{% endif %}
+        </td>
+        <td class="text-end">
+          <a href="{% url 'employee_edit' e.pk %}" class="btn btn-sm btn-outline-primary">Edit</a>
+          <form method="post" action="{% url 'employee_toggle' e.pk %}" class="d-inline">
+            {% csrf_token %}
+            <button class="btn btn-sm btn-outline-danger">
+              {% if e.is_active %}Deactivate{% else %}Activate{% endif %}
+            </button>
+          </form>
+        </td>
+      </tr>
+      {% empty %}
+      <tr><td colspan="6" class="text-center">No employees yet.</td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}
