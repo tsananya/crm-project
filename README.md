@@ -1,4 +1,8 @@
 # crm-project
+## Live demo
+- Live: https://crm-project-55ln.onrender.com
+- Mobile admin UI: https://crm-project-55ln.onrender.com/m/
+- Free hosting: the first load can take about a minute, and data resets on restart (demo data is recreated automatically).
 # Loan Sales & Call Centre CRM
 
 A CRM for a loan intermediary company. The admin uploads and distributes leads to
