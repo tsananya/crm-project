@@ -26,7 +26,7 @@ SECRET_KEY = "django-insecure-6x(imj5s5m9x7q87s3pdpqe-^0pddr_461^u00vk6sy_=w99l7
 DEBUG = True
 
 ALLOWED_HOSTS = ['*']
-CSRF_TRUSTED_ORIGINS = ['https://*.app.github.dev']
+CSRF_TRUSTED_ORIGINS = ['https://*.app.github.dev', 'https://*.onrender.com']
 
 
 # Application definition
@@ -51,6 +51,7 @@ MIDDLEWARE = [
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
+    "whitenoise.middleware.WhiteNoiseMiddleware",
 ]
 
 ROOT_URLCONF = "crm.urls"
@@ -135,3 +136,5 @@ MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
 LOGIN_URL = 'login'
 LOGIN_REDIRECT_URL = 'home'
+STATIC_ROOT = BASE_DIR / 'staticfiles'
+SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
