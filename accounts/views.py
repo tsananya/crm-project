@@ -1,3 +1,7 @@
+from django.db.models import Q
+from django.utils import timezone
+from leads.models import Lead, CallLog
+from loans.models import LoanApplication, Document
 from django.contrib import messages
 from django.contrib.auth import logout
 from django.contrib.auth.decorators import login_required
@@ -22,8 +26,25 @@ def logout_view(request):
 
 @admin_required
 def admin_dashboard(request):
-    return render(request, 'admin_portal/dashboard.html')
-
+    today = timezone.localdate()
+    staff = User.objects.filter(role='staff', is_active=True).annotate(
+        calls=Count('calllog', filter=Q(calllog__called_at__date=today))).order_by('username')
+    calls_today = CallLog.objects.filter(called_at__date=today)
+    app_counts = [(label, LoanApplication.objects.filter(status=key).count())
+                  for key, label in LoanApplication.STATUS]
+    return render(request, 'admin_portal/dashboard.html', {
+        'total_leads': Lead.objects.count(),
+        'unassigned': Lead.objects.filter(assigned_to__isnull=True).count(),
+        'calls_today': calls_today.count(),
+        'interested_today': calls_today.filter(status='interested').count(),
+        'pending_docs': Document.objects.filter(verification='pending').count(),
+        'applications': LoanApplication.objects.count(),
+        'app_counts': app_counts,
+        'staff_rows': [(s.username, s.calls, s.daily_target) for s in staff],
+        'labels': [s.username for s in staff],
+        'counts': [s.calls for s in staff],
+        'targets': [s.daily_target for s in staff],
+    })
 
 @staff_required
 def staff_dashboard(request):

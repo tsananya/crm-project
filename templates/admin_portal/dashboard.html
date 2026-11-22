@@ -1,5 +1,47 @@
 {% extends 'admin_portal/layout.html' %}
 {% block page %}
-<h3>Admin Dashboard</h3>
-<p>Welcome, {{ user.username }}.</p>
+<h3>Dashboard</h3>
+<div class="row g-3 mb-3">
+  <div class="col-6 col-lg-4"><div class="card shadow-sm"><div class="card-body"><div class="text-muted small">Total leads</div><h3>{{ total_leads }}</h3></div></div></div>
+  <div class="col-6 col-lg-4"><div class="card shadow-sm"><div class="card-body"><div class="text-muted small">Unassigned leads</div><h3>{{ unassigned }}</h3></div></div></div>
+  <div class="col-6 col-lg-4"><div class="card shadow-sm"><div class="card-body"><div class="text-muted small">Calls today</div><h3>{{ calls_today }}</h3></div></div></div>
+  <div class="col-6 col-lg-4"><div class="card shadow-sm"><div class="card-body"><div class="text-muted small">Interested today</div><h3>{{ interested_today }}</h3></div></div></div>
+  <div class="col-6 col-lg-4"><div class="card shadow-sm"><div class="card-body"><div class="text-muted small">Documents pending</div><h3>{{ pending_docs }}</h3></div></div></div>
+  <div class="col-6 col-lg-4"><div class="card shadow-sm"><div class="card-body"><div class="text-muted small">Loan applications</div><h3>{{ applications }}</h3></div></div></div>
+</div>
+
+<div class="row g-3">
+  <div class="col-lg-7">
+    <div class="card shadow-sm"><div class="card-body">
+      <h6>Calls today by employee</h6>
+      <canvas id="chart" height="120"></canvas>
+    </div></div>
+  </div>
+  <div class="col-lg-5">
+    <div class="card shadow-sm"><div class="card-body">
+      <h6>Applications by status</h6>
+      {% for label, n in app_counts %}
+        <div class="d-flex justify-content-between border-bottom py-1"><span>{{ label }}</span><b>{{ n }}</b></div>
+      {% endfor %}
+    </div></div>
+  </div>
+</div>
+
+{{ labels|json_script:"labels" }}
+{{ counts|json_script:"counts" }}
+{{ targets|json_script:"targets" }}
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js"></script>
+<script>
+  new Chart(document.getElementById('chart'), {
+    type: 'bar',
+    data: {
+      labels: JSON.parse(document.getElementById('labels').textContent),
+      datasets: [
+        {label: 'Calls done', data: JSON.parse(document.getElementById('counts').textContent), backgroundColor: '#0d6efd'},
+        {label: 'Target', data: JSON.parse(document.getElementById('targets').textContent), backgroundColor: '#dee2e6'}
+      ]
+    },
+    options: {scales: {y: {beginAtZero: true, ticks: {precision: 0}}}}
+  });
+</script>
 {% endblock %}

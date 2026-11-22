@@ -1,0 +1,38 @@
+{% extends 'admin_portal/layout.html' %}
+{% block page %}
+<h3>Document Verification</h3>
+<form method="get" class="mb-3 d-flex gap-2" style="max-width:360px">
+  <select name="status" class="form-select">
+    <option value="">All</option>
+    {% for key, label in choices %}
+      <option value="{{ key }}" {% if status == key %}selected{% endif %}>{{ label }}</option>
+    {% endfor %}
+  </select>
+  <button class="btn btn-outline-primary">Filter</button>
+</form>
+<div class="table-responsive">
+  <table class="table table-striped bg-white">
+    <thead><tr><th>Lead</th><th>Type</th><th>File</th><th>Uploaded by</th><th>Status</th><th></th></tr></thead>
+    <tbody>
+      {% for d in page %}
+      <tr>
+        <td>{{ d.lead.name }}</td>
+        <td>{{ d.get_doc_type_display }}</td>
+        <td><a href="{{ d.file.url }}" target="_blank">View</a></td>
+        <td>{{ d.uploaded_by.username|default:"-" }}</td>
+        <td><span class="badge {% if d.verification == 'verified' %}bg-success{% elif d.verification == 'rejected' %}bg-danger{% else %}bg-warning text-dark{% endif %}">{{ d.get_verification_display }}</span></td>
+        <td class="text-end">
+          <form method="post" action="{% url 'document_verify' d.pk 'verified' %}" class="d-inline">{% csrf_token %}<button class="btn btn-sm btn-success">Verify</button></form>
+          <form method="post" action="{% url 'document_verify' d.pk 'rejected' %}" class="d-inline">{% csrf_token %}<button class="btn btn-sm btn-danger">Reject</button></form>
+        </td>
+      </tr>
+      {% empty %}<tr><td colspan="6" class="text-center">No documents.</td></tr>{% endfor %}
+    </tbody>
+  </table>
+</div>
+<nav><ul class="pagination">
+  {% if page.has_previous %}<li class="page-item"><a class="page-link" href="?page={{ page.previous_page_number }}&status={{ status }}">Previous</a></li>{% endif %}
+  <li class="page-item disabled"><span class="page-link">Page {{ page.number }} of {{ page.paginator.num_pages }}</span></li>
+  {% if page.has_next %}<li class="page-item"><a class="page-link" href="?page={{ page.next_page_number }}&status={{ status }}">Next</a></li>{% endif %}
+</ul></nav>
+{% endblock %}
